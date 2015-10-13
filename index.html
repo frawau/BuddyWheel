@@ -8,10 +8,22 @@
     <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
     <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
     <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+    <script type="text/javascript" src="js/BuddyWheel.js"></script>
+        
+        <script type="text/javascript">
 
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+            window.onload = function() {
+                var myElt = document.getElementById("testme");
+                var cc = colourwheel(myElt, 250, "test-")
+                cc.onchange( function(colour) {
+                    var myelt = document.getElementById("bu-fill");
+                    var mycol = cc.get_hsl_colour();
+                    myelt.setAttribute("fill","hsl("+mycol[0]+","+mycol[1]+"%, "+mycol[2]+"%)");
+                    })
+                cc.set_colour([0,80,50])
+            };
+        </script>
+
 
     <title>Buddywheel by frawau</title>
   </head>
@@ -28,8 +40,6 @@
     <div id="content-wrapper">
       <div class="inner clearfix">
         <section id="main-content">
-          <p>&lt;!DOCTYPE html&gt;
-
    </p>
         Buddy Colourwheel
         
@@ -38,20 +48,6 @@
         
         
 
-<pre><code>    &lt;script type="text/javascript"&gt;
-
-        window.onload = function() {
-            var myElt = document.getElementById("testme");
-            var cc = colourwheel(myElt, 250, "test-")
-            cc.onchange( function(colour) {
-                var myelt = document.getElementById("bu-fill");
-                var mycol = cc.get_hsl_colour();
-                myelt.setAttribute("fill","hsl("+mycol[0]+","+mycol[1]+"%, "+mycol[2]+"%)");
-                })
-            cc.set_colour([0,80,50])
-        };
-    &lt;/script&gt;
-</code></pre>
 
 <p>
    </p>
