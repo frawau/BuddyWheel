@@ -39,34 +39,18 @@
                               68-180z" fill="transparent"/>
    </svg>
    </div>
-   <h1>Introduction</h1>
-   <p>For a project I am working on, I needed a colourwheel. I looked around and found some on the web,
-   including <a href="http://timbaumann.info/colortriangle/" target="_blank">Colortriangle</a> (Using Canvas) and 
-   <a href="http://jweir.github.io/colorwheel/" target="_blank">this colorwheel</a>. Since those guys coud not spell <em>colour</em>
-   and I was in a <a href="http://www.w3schools.com/html/html5_svg.asp" target="_blank">SVG</a> mood I decided to build my own.</p>
-   <p>It is pretty basic, but it works if you have a recent browser. Old browser need not apply. If you can see it at the top of this page, 
-   your browser is OK. It does not depend on anything.</p>
-   <p>Usage is pretty straighforward:
-       <dl>
-            <dt>colourwheel(elt, size, prefix)</dt><dd>To create a colourwheel.<ul><li>elt: the parent DOM element,
-                    <li>size: the size of the colourwheel. Only one dimension is needed</li>
-                    <li>prefix: a string. By using a different prefix you can have more than one colourwheel.</li></ul></dd>
-            <vr />
-            <dt>set_colour(colour)</dt><dd>To set the colour of the colourwheel. the colour argumentis an array with 3 values
-                    <ul><li>hue; 0-360</li><li>saturation: 0-100</li><li>value: 0-100</li></ul>
-                    in that order.</dd>
-            <br />
-            <dt>get_colour()</dt><dd>Get the current colour. Returns an array [hue,saturation.value]</dd>
-            <br />
-            <dt>val()</dt><dd>Same as get_colour()</dd>
-            <br />
-            <dt>get_hsl_colour()</dt><dd>Get the current colour as an array with 3 values
-                    <ul><li>hue; 0-360</li><li>saturation: 0-100</li><li>lightness: 0-100</li></ul>
-                    in that order.</dd>
-            <br />
-            <dt>onchange()</dt><dd>Register a callback function. The ne parameter to that callback function is an array [hue,saturation,value]</dd>
-        </dl>
-    </p>
-
+   <p>Try Me! It was create with:</p>
+   <xmp>
+            window.onload = function() {
+                var myElt = document.getElementById("testme");
+                var cc = colourwheel(myElt, 250, "test-")
+                cc.onchange( function(colour) {
+                    var myelt = document.getElementById("bu-fill");
+                    var mycol = cc.get_hsl_colour();
+                    myelt.setAttribute("fill","hsl("+mycol[0]+","+mycol[1]+"%, "+mycol[2]+"%)");
+                    })
+                cc.set_colour([0,80,50])
+            };
+   </xmp>
    </body>
 </html>
