@@ -32,7 +32,7 @@
     <header>
       <div class="inner">
         <h1>Buddywheel</h1>
-        <h2>An SVG/Javascript colourwheel. It only needs a recent browser.</h2>
+        <h2>An SVG/Javascript colourwheel.</h2>
         <a href="https://github.com/frawau/BuddyWheel" class="button"><small>View project on</small> GitHub</a>
       </div>
     </header>
@@ -65,8 +65,13 @@
    including <a href="http://timbaumann.info/colortriangle/" target="_blank">Colortriangle</a> (Using Canvas) and 
    <a href="http://jweir.github.io/colorwheel/" target="_blank">this colorwheel</a>. Since those guys coud not spell <em>colour</em>
    and I was in a <a href="http://www.w3schools.com/html/html5_svg.asp" target="_blank">SVG</a> mood I decided to build my own.</p>
-   <p>It is pretty basic, but it works if you have a recent browser. Old browser need not apply. If you can see it at the top of this page, 
-   your browser is OK. It does not depend on anything.</p>
+   <p>It is pretty basic, but it works with some recent browser. Old browser need not apply. If you can see it at the top of this page, 
+   your browser is OK. There are no dependencies.</p>
+   <p>
+   It is working on recent versions of Chrome and Firefox. On IE and Safari, the triangular colour gradient shows
+   up black, but,for the rest it works
+   </p>
+ 
 
 <h1>
 <a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h1>
@@ -76,8 +81,9 @@
 <dd>To create a colourwheel.<ul>
 <li>elt: the parent DOM element,
                     </li>
-<li>size: the size of the colourwheel. Only one dimension is needed</li>
-                    <li>prefix: a string. By using a different prefix you can have more than one colourwheel.</li>
+<li>size: the size of the colourwheel. Only one dimension is needed since we use a square.</li>
+                    <li>prefix: a string. By using a different prefix you can have more than one colourwheel. It is optional and default
+                         to <code>bu-</code> when not set</li>
 </ul>
 </dd>
             
