@@ -80,6 +80,7 @@ colourwheel = function(target, size, prefix){
     }
     
     function trackHue(e) {
+        e.preventDefault();
         var svgobj =  document.getElementById(idprefix+"colourwheel");
         var pt = svgobj.createSVGPoint();
         pt.x = e.clientX;
@@ -113,11 +114,15 @@ colourwheel = function(target, size, prefix){
     };
     function startTrackHue(e) {
         document.addEventListener("mousemove", trackHue);
+        document.addEventListener("touchmove", trackHue);
         document.addEventListener("mouseup", stopTrackHue);
+        document.addEventListener("touchend", stopTrackHue);
     };
     function stopTrackHue(e) {
         document.removeEventListener("mousemove", trackHue);
+        document.removeEventListener("touchmove", trackHue);
         document.removeEventListener("mouseup", stopTrackHue);
+        document.removeEventListener("touchend", stopTrackHue);
     };
     
     function in_SVW (px,py) {
@@ -148,6 +153,7 @@ colourwheel = function(target, size, prefix){
     }
     
     function trackSV(e) {
+        e.preventDefault();
         var svgobj =  document.getElementById(idprefix+"colourwheel");
         var pt = svgobj.createSVGPoint();
         pt.x = e.clientX;
@@ -294,24 +300,33 @@ colourwheel = function(target, size, prefix){
         newElement.setAttribute("y2",25);
         svElement.appendChild(newElement);
         var huehandle = document.createElementNS("http://www.w3.org/2000/svg", 'circle');
-        huehandle.setAttribute("id",idprefix+"cw-hue-handle");
+        //huehandle.setAttribute("id",idprefix+"cw-hue-handle");
         huehandle.setAttribute("style","fill:black");
         huehandle.setAttribute("cx",500);
         huehandle.setAttribute("cy",25);
         huehandle.setAttribute("r",25);
         svElement.appendChild(huehandle);
+        var huehandle = document.createElementNS("http://www.w3.org/2000/svg", 'circle');
+        huehandle.setAttribute("id",idprefix+"cw-hue-handle");
+        huehandle.setAttribute("style","fill:transparent; stroke none;");
+        huehandle.setAttribute("cx",500);
+        huehandle.setAttribute("cy",25);
+        huehandle.setAttribute("r",40);
+        svElement.appendChild(huehandle);
         var svhandle = document.createElementNS("http://www.w3.org/2000/svg", 'circle');
         svhandle.setAttribute("id",idprefix+"cw-sv-handle");
         svhandle.setAttribute("fill","transparent");
         svhandle.setAttribute("stroke","black");
-        svhandle.setAttribute("stroke-width",7);
+        svhandle.setAttribute("stroke-width",10);
         svhandle.setAttribute("cx",500);
         svhandle.setAttribute("cy",500);
         svhandle.setAttribute("r",25);
         svElement.appendChild(svhandle);
         
         huehandle.addEventListener("mousedown", startTrackHue);
+        huehandle.addEventListener("touchstart", startTrackHue);
         svhandle.addEventListener("mousedown", startTrackSV);
+        svhandle.addEventListener("touchstart", startTrackSV);
         target.appendChild(svgElement)
         set_colour([0,50,65])
         return signature()

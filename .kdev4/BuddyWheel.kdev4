@@ -1,0 +1,15 @@
+[Buildset]
+BuildItems=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x01\x00\x00\x00\x0b\x00\x00\x00\x00\x01\x00\x00\x00\x14\x00B\x00u\x00d\x00d\x00y\x00W\x00h\x00e\x00e\x00l)
+
+[CustomDefinesAndIncludes][ProjectPath0]
+Defines=\x00\x00\x00\x00
+Includes=\x00\x00\x00\x00
+Path=.
+
+[Defines And Includes][Compiler]
+Name=None
+Path=
+Type=
+
+[Project]
+VersionControlSupport=kdevgit
