@@ -4,6 +4,9 @@
 * Licensed under the MIT (http://www.opensource.org/licenses/mit-license.php) license.
 */
 
+SVGElement.prototype.getTransformToElement = SVGElement.prototype.getTransformToElement || function(elem) {
+    return elem.getScreenCTM().inverse().multiply(this.getScreenCTM());
+};
 colourwheel = function(target, size, prefix){
     var hue=0,
         satu=50,
