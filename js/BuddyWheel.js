@@ -3,7 +3,12 @@
 * Copyright (c) 2015 François Wautier
 * Licensed under the MIT (http://www.opensource.org/licenses/mit-license.php) license.
 */
-
+/*
+ * Added to correct problem with Chrome 48 removing this function
+ */
+SVGElement.prototype.getTransformToElement = SVGElement.prototype.getTransformToElement || function(elem) {
+    return elem.getScreenCTM().inverse().multiply(this.getScreenCTM());
+};
 colourwheel = function(target, size, prefix){
     var hue=0,
         satu=50,
