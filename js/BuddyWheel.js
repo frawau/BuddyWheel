@@ -330,6 +330,10 @@ colourwheel = function(target, size, prefix){
         huehandle.addEventListener("touchstart", startTrackHue);
         svhandle.addEventListener("mousedown", startTrackSV);
         svhandle.addEventListener("touchstart", startTrackSV);
+        svElement.addEventListener("click", trackSV);
+        svElement.addEventListener("touchstart", trackSV);
+        hwElement.addEventListener("click", trackHue);
+        hwElement.addEventListener("touchstart", trackHue);
         target.appendChild(svgElement)
         set_colour([0,50,65])
         return signature()
