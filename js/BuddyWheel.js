@@ -3,7 +3,9 @@
 * Copyright (c) 2015 François Wautier
 * Licensed under the MIT (http://www.opensource.org/licenses/mit-license.php) license.
 */
-
+/*
+ * Added to correct problem with Chrome 48 removing this function
+ */
 SVGElement.prototype.getTransformToElement = SVGElement.prototype.getTransformToElement || function(elem) {
     return elem.getScreenCTM().inverse().multiply(this.getScreenCTM());
 };
@@ -86,8 +88,13 @@ colourwheel = function(target, size, prefix){
         e.preventDefault();
         var svgobj =  document.getElementById(idprefix+"colourwheel");
         var pt = svgobj.createSVGPoint();
-        pt.x = e.clientX;
-        pt.y = e.clientY;
+        if ((e.clientX)&(e.clientY)) {
+            pt.x = e.clientX;
+            pt.y = e.clientY;
+        } else  if (e.targetTouches) {
+            pt.x = e.targetTouches[0].clientX;
+            pt.y = e.targetTouches[0].clientY;
+        }
         var globalPoint = pt.matrixTransform(svgobj.getScreenCTM().inverse());
         var dragobj =  document.getElementById(idprefix+"hue-wheel");
         var globalToLocal = dragobj.getTransformToElement(svgobj).inverse();
@@ -116,16 +123,22 @@ colourwheel = function(target, size, prefix){
             myelt.setAttribute("stroke","hsl("+(Math.round(angle)+180) % 360+",80%,50%)");
     };
     function startTrackHue(e) {
-        document.addEventListener("mousemove", trackHue);
-        document.addEventListener("touchmove", trackHue);
-        document.addEventListener("mouseup", stopTrackHue);
-        document.addEventListener("touchend", stopTrackHue);
+        if ( e.type == "mousedown") {
+            document.addEventListener("mousemove", trackHue);
+            document.addEventListener("mouseup", stopTrackHue);
+        } else {
+            document.addEventListener("touchmove", trackHue);
+            document.addEventListener("touchend", stopTrackHue);
+        }
     };
     function stopTrackHue(e) {
-        document.removeEventListener("mousemove", trackHue);
-        document.removeEventListener("touchmove", trackHue);
-        document.removeEventListener("mouseup", stopTrackHue);
-        document.removeEventListener("touchend", stopTrackHue);
+        if ( e.type == "mouseup") {
+            document.removeEventListener("mousemove", trackHue);
+            document.removeEventListener("mouseup", stopTrackHue);
+        } else {
+            document.removeEventListener("touchmove", trackHue);
+            document.removeEventListener("touchend", stopTrackHue);
+        }
     };
     
     function in_SVW (px,py) {
@@ -159,8 +172,13 @@ colourwheel = function(target, size, prefix){
         e.preventDefault();
         var svgobj =  document.getElementById(idprefix+"colourwheel");
         var pt = svgobj.createSVGPoint();
-        pt.x = e.clientX;
-        pt.y = e.clientY;
+        if ((e.clientX)&(e.clientY)) {
+            pt.x = e.clientX;
+            pt.y = e.clientY;
+        } else  if (e.targetTouches) {
+            pt.x = e.targetTouches[0].clientX;
+            pt.y = e.targetTouches[0].clientY;
+        }
         var globalPoint = pt.matrixTransform(svgobj.getScreenCTM().inverse());
         var dragobj = document.getElementById(idprefix+"cw-sv-handle")
         var globalToLocal = dragobj.getTransformToElement(svgobj).inverse();
@@ -189,12 +207,22 @@ colourwheel = function(target, size, prefix){
     }
     
     function startTrackSV(e) {
-        document.addEventListener("mousemove", trackSV);
-        document.addEventListener("mouseup", stopTrackSV);
+        if ( e.type == "mousedown") {
+            document.addEventListener("mousemove", trackSV);
+            document.addEventListener("mouseup", stopTrackSV);
+        } else {
+            document.addEventListener("touchmove", trackSV);
+            document.addEventListener("touchend", stopTrackSV);
+        }
     };
     function stopTrackSV(e) {
-        document.removeEventListener("mousemove", trackSV);
-        document.removeEventListener("mouseup", stopTrackSV);
+        if ( e.type == "mouseup") {
+            document.removeEventListener("mousemove", trackSV);
+            document.removeEventListener("mouseup", stopTrackSV);
+        } else {
+            document.removeEventListener("touchmove", trackSV);
+            document.removeEventListener("touchend", stopTrackSV);
+        }
     };
 
     function create ( target, size) {
