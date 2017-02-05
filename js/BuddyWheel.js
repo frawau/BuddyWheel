@@ -12,8 +12,9 @@ SVGElement.prototype.getTransformToElement = SVGElement.prototype.getTransformTo
 colourwheel = function(target, size, prefix){
     var hue=0,
         satu=50,
-        value=65,
+        bright=65,
         bu_callback,
+        bu_gencallback,
         idprefix = prefix || "bu-",
         nbseg = 180,
         angle = 360/nbseg;;
@@ -44,44 +45,38 @@ colourwheel = function(target, size, prefix){
         var b = Math.round( t+colour[2] );
         return [colour[0],s,b]
     }
-
-    function signature(){
-        return {
-            onchange: onchange,
-            set_colour : set_colour,
-            get_colour : get_colour,
-            get_hsl_colour : get_hsl_colour,
-            val: get_colour
-        };
-    }
     
     function set_colour(B) {
         set_hue(B[0]);
-        var hslcol = toHSL(B);
-        var sat = Math.round(675-((hslcol[1]*525)/100));
-        var val = Math.round(196.9+((hslcol[2]*611)/100)) ;
+        var hslcol = B;
+        var sat = Math.round(505-((hslcol[1]*505)/100));
+        var val = Math.round(252.5+((hslcol[2]*505)/100)) ;
         set_sv(sat,val);
         if (bu_callback) {
             bu_callback(get_colour());
         }
     }
-     
+
     function get_colour() {
         var h = hue;
-        var s = Math.round(100-((satu-150)/525)*100)
-        var l = Math.round(((value-197)/611)*100)
-        return toHSB([h,s,l])
+        var s = Math.round(100-((satu-252.5)/505)*100)
+        var l = Math.round(((bright-252.5)/505)*100)
+        return [h,s,l]
     }
      
     function get_hsl_colour() {
         var h = hue;
-        var s = Math.round(100-((satu-150)/525)*100)
-        var l = Math.round(((value-197)/611)*100)
-        return [h,s,l]
+        var s = Math.round(100-((satu-252.5)/505)*100)
+        var l = Math.round(((bright-252.5)/505)*100)
+        return toHSL([h,s,l])
     }
     
     function onchange(fcnt) {
         bu_callback=fcnt;
+    }
+    
+    function onChange(fcnt) {
+        bu_gencallback=fcnt;
     }
     
     function trackHue(e) {
@@ -106,6 +101,9 @@ colourwheel = function(target, size, prefix){
         if (bu_callback) {
             bu_callback(get_colour());
         }
+        if (bu_gencallback) {
+            bu_gencallback(e);
+        }
         return false;
     } 
     function set_hue(angle) {
@@ -115,12 +113,12 @@ colourwheel = function(target, size, prefix){
         while ( mydiv < 100 ) {
             myelt = document.getElementById(idprefix+"stop-colour-"+mydiv);
             
-            var myhsl=toHSL([0,mydiv,100])
+            var myhsl=toHSL([Math.round(angle),mydiv,100])
             myelt.setAttribute("stop-color", "hsl("+Math.round(angle)+","+myhsl[1]+"%,"+myhsl[2]+"%");
             mydiv += 1;
             }
             var myelt = document.getElementById(idprefix+"cw-sv-handle");
-            myelt.setAttribute("stroke","hsl("+(Math.round(angle)+180) % 360+",80%,50%)");
+            myelt.setAttribute("stroke","hsl("+(Math.round(angle)) % 360+",80%,50%)");
     };
     function startTrackHue(e) {
         if ( e.type == "mousedown") {
@@ -142,30 +140,10 @@ colourwheel = function(target, size, prefix){
     };
     
     function in_SVW (px,py) {
+        var ax = 252.5;
+        var ay = 747.5;
+        return (px >= ax) && (py >= ax) && (px <= ay) && (py <= ay)
 
-        //credit: http://www.blackpawn.com/texts/pointinpoly/default.html
-        var ax = 500;
-        var ay = 150;
-        var bx = 196.9;
-        var by = 676;
-        var cx = 808.1;
-        var cy = 675;
-        var v0 = [cx-ax,cy-ay];
-        var v1 = [bx-ax,by-ay];
-        var v2 = [px-ax,py-ay];
-
-        var dot00 = (v0[0]*v0[0]) + (v0[1]*v0[1]);
-        var dot01 = (v0[0]*v1[0]) + (v0[1]*v1[1]);
-        var dot02 = (v0[0]*v2[0]) + (v0[1]*v2[1]);
-        var dot11 = (v1[0]*v1[0]) + (v1[1]*v1[1]);
-        var dot12 = (v1[0]*v2[0]) + (v1[1]*v2[1]);
-
-        var invDenom = 1/ (dot00 * dot11 - dot01 * dot01);
-
-        var u = (dot11 * dot02 - dot01 * dot12) * invDenom;
-        var v = (dot00 * dot12 - dot01 * dot02) * invDenom;
-
-        return ((u >= 0) && (v >= 0) && (u + v <= 1));
     }
     
     function trackSV(e) {
@@ -184,13 +162,17 @@ colourwheel = function(target, size, prefix){
         var globalToLocal = dragobj.getTransformToElement(svgobj).inverse();
         var inObjectSpace = globalPoint.matrixTransform( globalToLocal );
         if ( in_SVW (inObjectSpace.x,inObjectSpace.y) ) { 
-            value = inObjectSpace.x;
+            bright = inObjectSpace.x;
             satu = inObjectSpace.y
             dragobj.setAttribute("cx",inObjectSpace.x);
             dragobj.setAttribute("cy",inObjectSpace.y);
             
             if (bu_callback) {
                 bu_callback(get_colour());
+            }
+            
+            if (bu_gencallback) {
+                bu_gencallback(e);
             }
         }
         return false;
@@ -199,7 +181,7 @@ colourwheel = function(target, size, prefix){
     function set_sv(sat,val) {
        if ( in_SVW (val,sat) ) { 
             satu = sat;
-            value = val;
+            bright = val;
             var dragobj = document.getElementById(idprefix+"cw-sv-handle")
             dragobj.setAttribute("cx",val);
             dragobj.setAttribute("cy",sat);
@@ -239,7 +221,8 @@ colourwheel = function(target, size, prefix){
         newElement = document.createElementNS("http://www.w3.org/2000/svg", 'clipPath');
         newElement.setAttribute("id",idprefix+"sv-clipPath");
         onewElement = document.createElementNS("http://www.w3.org/2000/svg", 'polygon');
-        onewElement.setAttribute("points","500,150 196.9,675 808.1,675");
+        onewElement.setAttribute("points","252.5,252.5 252.5,747.5 747.5,747.5 747.5,252.5");
+        //onewElement.setAttribute("points","500,150 196.9,675 808.1,675");
         newElement.appendChild(onewElement);
         defsElement.appendChild(newElement);
         svgElement.appendChild(defsElement);
@@ -285,7 +268,7 @@ colourwheel = function(target, size, prefix){
         var myLG, xstart, astop;
         // Create as many Linear gradients as we need, the middle "stop" has an id
         while ( mydiv < 100 ) {
-            var ystart= 675 - (5.25*(mydiv+1))  // 5.25 = (675 - 150)/100;
+            var ystart= 747.5 - (5.05*(mydiv+1))  // 5.05 = 2*252.5)/100;
             myLG = document.createElementNS("http://www.w3.org/2000/svg", "linearGradient");
             myLG.setAttribute("id", idprefix+"LGID-"+mydiv);
             myLG.setAttribute("x1", "0%");
@@ -294,39 +277,41 @@ colourwheel = function(target, size, prefix){
             myLG.setAttribute("y2", "0%");
             astop= document.createElementNS("http://www.w3.org/2000/svg", "stop");
             astop.setAttribute("offset", "0%");
-            astop.setAttribute("stop-color", "hsl(0,"+mydiv+"%,0%");
-            myLG.appendChild(astop);
-            astop= document.createElementNS("http://www.w3.org/2000/svg", "stop");
-            astop.setAttribute("id", idprefix+"stop-colour-"+mydiv);
-            astop.setAttribute("offset", "50%");
-            var myhsl=toHSL([0,mydiv,100])
+            var myhsl=toHSL([0,mydiv,0])
             astop.setAttribute("stop-color", "hsl(0,"+myhsl[1]+"%,"+myhsl[2]+"%");
             myLG.appendChild(astop);
             astop= document.createElementNS("http://www.w3.org/2000/svg", "stop");
+            astop.setAttribute("id", idprefix+"stop-colour-"+mydiv);
+//             astop.setAttribute("offset", "50%");
+//             myhsl=toHSL([0,mydiv,50])
+//             astop.setAttribute("stop-color", "hsl(0,"+myhsl[1]+"%,"+myhsl[2]+"%");
+//             myLG.appendChild(astop);
+//             astop= document.createElementNS("http://www.w3.org/2000/svg", "stop");
             astop.setAttribute("offset", "100%");
-            astop.setAttribute("stop-color", "hsl(0,"+mydiv+"%,100%");
+            myhsl=toHSL([0,mydiv,100])
+            astop.setAttribute("stop-color", "hsl(0,"+myhsl[1]+"%,"+myhsl[2]+"%");
             myLG.appendChild(astop);
             defsElement.appendChild(myLG);
             // The clipped rect
             myLG = document.createElementNS("http://www.w3.org/2000/svg", "rect");
             myLG.setAttribute("style","fill:url(#"+idprefix+"LGID-"+mydiv+");");
-            myLG.setAttribute("x", 197);
+            myLG.setAttribute("x", 252.5);
             myLG.setAttribute("y",ystart);
-            myLG.setAttribute("width", 605);
-            myLG.setAttribute("height", 10.5);
+            myLG.setAttribute("width", 505);
+            myLG.setAttribute("height", 8.5);
             gradElement.appendChild(myLG);
             mydiv += 1;
         }
             
         newElement = document.createElementNS("http://www.w3.org/2000/svg", 'polygon'); 
-        newElement.setAttribute("points","500,150 196.9,675 808.1,675");
+        newElement.setAttribute("points","252.5,252.5 252.5,747.5 747.5,747.5 747.5,252.5");
         newElement.setAttribute("style","fill: transparent; stroke: black; stroke-width: 1;");
         //newElement.setAttribute("style","fill: url(#myLGID-XX); stroke: black; stroke-width: 1;");
         svElement.appendChild(newElement);
         newElement = document.createElementNS("http://www.w3.org/2000/svg", 'line');
         newElement.setAttribute("style","stroke:rgb(0,0,0);stroke-width:10;");
         newElement.setAttribute("x1",500);
-        newElement.setAttribute("y1",150);
+        newElement.setAttribute("y1",252.5);
         newElement.setAttribute("x2",500);
         newElement.setAttribute("y2",25);
         svElement.appendChild(newElement);
@@ -366,6 +351,38 @@ colourwheel = function(target, size, prefix){
         set_colour([0,50,65])
         return signature()
     };
-            
+         
+    //   Integration with buddyguilib
+    function setValue(V) {
+        this.set_colour([V["hue"],V["saturation"],V["value"]])
+    }
+    function getValue() {
+        var resu = this.get_colour();
+        return {"hue":resu[0],"saturation":resu[1],"value":resu[2]}
+    } 
+
+    // The object returned
+    function signature(){
+        return {
+            onchange: onchange,
+            set_colour : set_colour,
+            get_colour : get_colour,
+            get_hsl_colour : get_hsl_colour,
+            val: get_colour,
+            setValue: setValue,
+            getValue: getValue,
+            onChange: onChange,
+        };
+    }
+    
     return create(target,size);
+}
+
+// Integration with buddyguilib. Providing "colourpicker" widget
+if ( typeof buwidgetRegistry !== 'undefined' ) {
+    var buwrprefix=1;
+    buwidgetRegistry["colourpicker"]= function( target , hsize, vsize ) {
+        buwrprefix+=1;
+        return colourwheel( target, hsize, "bucw"+buwrprefix+"-")
+    }
 }
