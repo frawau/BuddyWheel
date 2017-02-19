@@ -48,9 +48,9 @@ colourwheel = function(target, size, prefix){
     
     function set_colour(B) {
         set_hue(B[0]);
-        var hslcol = B;
-        var sat = Math.round(505-((hslcol[1]*505)/100));
-        var val = Math.round(252.5+((hslcol[2]*505)/100)) ;
+        var hsvcol = B;
+        var sat = Math.round(752.5-((hsvcol[1]*505)/100));
+        var val = Math.round(252.5+((hsvcol[2]*505)/100)) ;
         set_sv(sat,val);
         if (bu_callback) {
             bu_callback(get_colour());
@@ -118,7 +118,7 @@ colourwheel = function(target, size, prefix){
             mydiv += 1;
             }
             var myelt = document.getElementById(idprefix+"cw-sv-handle");
-            myelt.setAttribute("stroke","hsl("+(Math.round(angle)) % 360+",80%,50%)");
+            myelt.setAttribute("stroke","hsl("+(Math.round(angle+180)) % 360+",80%,50%)");
     };
     function startTrackHue(e) {
         if ( e.type == "mousedown") {
