@@ -118,7 +118,7 @@ colourwheel = function(target, size, prefix){
             mydiv += 1;
             }
             var myelt = document.getElementById(idprefix+"cw-sv-handle");
-            myelt.setAttribute("stroke","hsl("+(Math.round(angle)) % 360+",80%,50%)");
+            myelt.setAttribute("stroke","hsl("+(Math.round(angle+180)) % 360+",80%,50%)");
     };
     function startTrackHue(e) {
         if ( e.type == "mousedown") {
